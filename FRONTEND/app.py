@@ -4,8 +4,9 @@ import requests
 app = Flask(__name__)
 
 # Cambia esto según tu entorno
-API_URL = "http://127.0.0.1:5000"   # backend local
-# API_URL = "http://TU-EC2-OR-LB.amazonaws.com"  # backend en AWS
+#API_URL = "http://127.0.0.1:5000"   # backend local
+API_URL = "http://alb-project-1386641155.us-east-1.elb.amazonaws.com"
+
 
 
 # =====================
