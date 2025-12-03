@@ -5,7 +5,8 @@ import requests
 app = Flask(__name__)
 
 # Cambia esto según tu entorno
-API_URL = os.getenv("API_URL", "http://127.0.0.1:5000")
+# Cambia esto según tu entorno
+API_URL = os.getenv("API_URL", "http://alb-project-1386641155.us-east-1.elb.amazonaws.com")
 
 
 

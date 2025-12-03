@@ -9,12 +9,12 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Config desde variables de entorno
-DB_HOST = os.getenv("DB_HOST", "localhost")
+# Config desde variables de entorno (pon las de tu RDS)
+DB_HOST = os.getenv("DB_HOST", "db-instancia-project.cgl84qec82qv.us-east-1.rds.amazonaws.com")
 DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASS = os.getenv("DB_PASS", "")
-DB_NAME = os.getenv("DB_NAME", "ejemplotest")
+DB_USER = os.getenv("DB_USER", "admin")
+DB_PASS = os.getenv("DB_PASS", "123456789aA")
+DB_NAME = os.getenv("DB_NAME", "test")
 
 def get_connection():
     return mysql.connector.connect(
@@ -37,12 +37,12 @@ def init_database():
     e inserta 2 registros de ejemplo en cada una si están vacías.
     """
     try:
-        print("🔄 Inicializando base de datos...")
+        print(" Inicializando base de datos...")
         con = get_connection()
         cursor = con.cursor()
         
         # ====== CREAR TABLA USERS ======
-        print("📋 Creando tabla 'users' si no existe...")
+        print(" Creando tabla 'users' si no existe...")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INT PRIMARY KEY AUTO_INCREMENT,
@@ -51,22 +51,22 @@ def init_database():
                 gender CHAR(1) CHECK (gender IN ('M', 'F'))
             );
         """)
-        print("✅ Tabla 'users' verificada/creada")
+        print(" Tabla 'users' verificada/creada")
         
         # Verificar si la tabla users está vacía
         cursor.execute("SELECT COUNT(*) FROM users;")
         user_count = cursor.fetchone()[0]
         
         if user_count == 0:
-            print("📝 Insertando registros de ejemplo en 'users'...")
+            print(" Insertando registros de ejemplo en 'users'...")
             cursor.execute("""
                 INSERT INTO users (name, age, gender) VALUES
                 ('Juan Pérez', 25, 'M'),
                 ('María García', 30, 'F');
             """)
-            print("✅ 2 usuarios de ejemplo insertados")
+            print(" 2 usuarios de ejemplo insertados")
         else:
-            print(f"ℹ️  La tabla 'users' ya tiene {user_count} registro(s)")
+            print(f"La tabla 'users' ya tiene {user_count} registro(s)")
         
         # ====== CREAR TABLA PRODUCTS ======
         print("📋 Creando tabla 'products' si no existe...")
@@ -78,31 +78,31 @@ def init_database():
                 tax DECIMAL(10, 2) NOT NULL DEFAULT 0.00
             );
         """)
-        print("✅ Tabla 'products' verificada/creada")
+        print("Tabla 'products' verificada/creada")
         
         # Verificar si la tabla products está vacía
         cursor.execute("SELECT COUNT(*) FROM products;")
         product_count = cursor.fetchone()[0]
         
         if product_count == 0:
-            print("📝 Insertando registros de ejemplo en 'products'...")
+            print("Insertando registros de ejemplo en 'products'...")
             cursor.execute("""
                 INSERT INTO products (name, price, tax) VALUES
                 ('Laptop Dell XPS 15', 1599.99, 95.99),
                 ('Mouse Logitech MX Master', 99.99, 7.00);
             """)
-            print("✅ 2 productos de ejemplo insertados")
+            print(" 2 productos de ejemplo insertados")
         else:
-            print(f"ℹ️  La tabla 'products' ya tiene {product_count} registro(s)")
+            print(f"  La tabla 'products' ya tiene {product_count} registro(s)")
         
         cursor.close()
         con.close()
-        print("✅ Base de datos inicializada correctamente\n")
+        print("Base de datos inicializada correctamente\n")
         
     except Error as e:
-        print(f"❌ Error al inicializar base de datos: {e}")
+        print(f" Error al inicializar base de datos: {e}")
     except Exception as e:
-        print(f"❌ Error inesperado: {e}")
+        print(f" Error inesperado: {e}")
 
 
 # -------------------------
@@ -322,9 +322,8 @@ def delete_user(user_id):
 def health():
     return jsonify({"status": "ok"}), 200
 
+
+init_database()
 if __name__ == "__main__":
-    # Inicializar base de datos al iniciar la aplicación
-    init_database()
-    
     # Iniciar servidor Flask
     app.run(host="0.0.0.0", port=5000, debug=True)
